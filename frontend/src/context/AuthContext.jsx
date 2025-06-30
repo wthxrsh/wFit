@@ -17,18 +17,16 @@ export function AuthProvider({ children }) {
       const token = localStorage.getItem('token');
       if (token) {
         try {
-          // Interceptor in apiClient adds the token header
-          const res = await apiClient.get('/api/auth/verify');
-          setUser(res.data.user);
+          const res = await apiClient.get('/api/auth/me');
+          setUser(res.data);
         } catch (error) {
-          console.error('Token verification failed', error);
+          console.error('Token verification failed, removing token.');
           localStorage.removeItem('token');
           setUser(null);
         }
       }
       setIsLoading(false);
     };
-
     verifyUser();
   }, []);
 
@@ -39,9 +37,8 @@ export function AuthProvider({ children }) {
       localStorage.setItem('token', res.data.token);
       toast.success('Logged in successfully!');
     } catch (error) {
-      console.error('Login failed:', error.response?.data?.message || 'An error occurred');
-      // Re-throw the error so form components can catch it
-      throw new Error(error.response?.data?.message || 'Login failed');
+      console.error('Login failed:', error.response?.data?.msg || 'An error occurred');
+      throw new Error(error.response?.data?.msg || 'Login failed');
     }
   }, []);
 
@@ -52,9 +49,8 @@ export function AuthProvider({ children }) {
       localStorage.setItem('token', res.data.token);
       toast.success('Account created successfully!');
     } catch (error) {
-      console.error('Signup failed:', error.response?.data?.message || 'An error occurred');
-      // Re-throw the error so form components can catch it
-      throw new Error(error.response?.data?.message || 'Signup failed');
+      console.error('Signup failed:', error.response?.data?.msg || 'An error occurred');
+      throw new Error(error.response?.data?.msg || 'Signup failed');
     }
   }, []);
 

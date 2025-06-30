@@ -1,12 +1,22 @@
+import React from 'react';
 import { Navigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext.jsx';
+import { useAuth } from '../context/AuthContext';
 
-export default function PrivateRoute({ children }) {
-  const { currentUser, loading } = useAuth();
+const PrivateRoute = ({ children }) => {
+  const { user, isLoading } = useAuth();
 
-  if (loading) {
+  if (isLoading) {
+    // While checking auth status, show a loading spinner
     return <div className="loading-spinner"></div>;
   }
 
-  return currentUser ? children : <Navigate to="/login" />;
-} 
+  if (!user) {
+    // When loading is finished and there's no user, redirect to login
+    return <Navigate to="/login" />;
+  }
+
+  // When loading is finished and there is a user, show the protected content
+  return children;
+};
+
+export default PrivateRoute; 
