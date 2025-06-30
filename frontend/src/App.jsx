@@ -29,7 +29,7 @@ function Navbar() {
   return (
     <header className="navbar">
       <div className="navbar-section">
-        <span className="nav-brand">wFit</span>
+        <span className="nav-brand">wTrack</span>
         <nav className="nav-links">
           {currentUser && (
             <>

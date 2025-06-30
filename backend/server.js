@@ -9,7 +9,7 @@ const connectDB = require('./config/db');
 app.use(cors());
 app.use(express.json());
 
-mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/wfit', {
+mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/wtrack', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
