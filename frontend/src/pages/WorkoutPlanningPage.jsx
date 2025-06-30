@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useData } from '../context/DataContext.jsx';
 
 export default function WorkoutPlanningPage() {
-  const { workouts, addWorkout, deleteWorkout, totalBurnt } = useData();
+  const { workouts, addWorkout, deleteWorkout } = useData();
   const [workoutType, setWorkoutType] = useState('');
   const [workoutDuration, setWorkoutDuration] = useState('');
   const [workoutCalories, setWorkoutCalories] = useState('');
@@ -39,7 +39,6 @@ export default function WorkoutPlanningPage() {
             </li>
           ))}
         </ul>
-        <div className="total-display">Total Burnt: {totalBurnt} cal</div>
       </div>
     </div>
   );

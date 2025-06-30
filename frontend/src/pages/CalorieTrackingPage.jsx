@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useData } from '../context/DataContext.jsx';
 
 export default function CalorieTrackingPage() {
-  const { foods, addFood, deleteFood, totalCalories } = useData();
+  const { food, addFood, deleteFood } = useData();
   const [foodName, setFoodName] = useState('');
   const [foodCalories, setFoodCalories] = useState('');
 
@@ -25,14 +25,13 @@ export default function CalorieTrackingPage() {
       <div className="list-container">
         <h3>Today's Log</h3>
         <ul className="list">
-          {(foods || []).map(f => (
+          {(food || []).map(f => (
             <li key={f._id} className="list-item">
               <span>{f.name} <span className="item-details">({f.calories} cal)</span></span>
               <button onClick={() => deleteFood(f._id)} className="delete-button">Delete</button>
             </li>
           ))}
         </ul>
-        <div className="total-display">Total: {totalCalories} cal</div>
       </div>
     </div>
   );
