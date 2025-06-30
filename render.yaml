@@ -16,9 +16,8 @@ services:
         fromSecret: true # Will be set in the Render dashboard
 
   # Frontend Service (Vite Static Site)
-  - type: static
+  - type: static_site
     name: wfit-frontend
-    env: static
     rootDir: frontend
     plan: free # optional
     buildCommand: npm install && npm run build
