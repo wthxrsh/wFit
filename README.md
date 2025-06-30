@@ -1,4 +1,4 @@
-# wFit - MERN Calorie and Workout Tracker
+# wTrack - MERN Calorie and Workout Tracker
 
 This is a full-stack MERN application for tracking daily caloric intake and workout routines.
 
@@ -45,3 +45,4 @@ Your application requires environment variables to connect to your database and 
 *   Vercel will now build and deploy your application. The `vercel.json` file in the root directory will handle the routing, ensuring that API requests are sent to your backend and all other requests are served by your React frontend.
 
 You're all set! Your application will be live at the domain provided by Vercel.
+# wtrack-demo
