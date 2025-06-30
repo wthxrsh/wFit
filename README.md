@@ -46,3 +46,4 @@ Your application requires environment variables to connect to your database and 
 
 You're all set! Your application will be live at the domain provided by Vercel.
 # wtrack-demo
+# wtrack-demo
