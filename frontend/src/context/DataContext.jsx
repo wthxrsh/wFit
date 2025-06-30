@@ -1,96 +1,81 @@
-import { createContext, useContext, useState, useEffect } from 'react';
-import axios from 'axios';
-import { useAuth } from './AuthContext.jsx';
+import React, { createContext, useState, useEffect, useCallback, useContext, useMemo } from 'react';
+import { toast } from 'react-hot-toast';
+import apiClient from '../api/axios';
+import { useAuth } from './AuthContext';
 
 const DataContext = createContext();
 
-export function useData() {
-  return useContext(DataContext);
-}
+export const useData = () => useContext(DataContext);
 
-export function DataProvider({ children }) {
-  const { currentUser } = useAuth();
-  const [foods, setFoods] = useState([]);
+export const DataProvider = ({ children }) => {
+  const { user } = useAuth();
+  const [food, setFood] = useState([]);
   const [workouts, setWorkouts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchData = useCallback(async () => {
+    if (!user) {
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
+    try {
+      const [foodRes, workoutsRes] = await Promise.all([
+        apiClient.get('/api/food'),
+        apiClient.get('/api/workout'),
+      ]);
+      setFood(foodRes.data);
+      setWorkouts(workoutsRes.data);
+    } catch (error) {
+      console.error('Failed to fetch data', error);
+      toast.error('Could not load your data.');
+    } finally {
+      setLoading(false);
+    }
+  }, [user]);
 
   useEffect(() => {
-    if (currentUser) {
-      const fetchAllData = async () => {
-        try {
-          const [foodRes, workoutRes] = await Promise.all([
-            axios.get('/api/food'),
-            axios.get('/api/workout'),
-          ]);
-          setFoods(foodRes.data || []);
-          setWorkouts(workoutRes.data || []);
-        } catch (error) {
-          console.error("Failed to fetch initial data", error);
-          setFoods([]);
-          setWorkouts([]);
-        }
-      };
-      fetchAllData();
-    } else {
-      setFoods([]);
-      setWorkouts([]);
-    }
-  }, [currentUser]);
+    fetchData();
+  }, [fetchData]);
 
-  const addFood = async (food) => {
+  const addFood = useCallback(async (foodData) => {
     try {
-      const res = await axios.post('/api/food', food);
-      if (res.data) {
-        setFoods(prev => [...prev, res.data]);
-      }
+      const res = await apiClient.post('/api/food', foodData);
+      setFood((prevFood) => [...prevFood, res.data]);
+      toast.success('Food added successfully!');
     } catch (error) {
-      console.error("Failed to add food", error);
+      console.error('Failed to add food', error);
+      toast.error('Could not add food item.');
     }
-  };
+  }, []);
 
-  const deleteFood = async (id) => {
+  const addWorkout = useCallback(async (workoutData) => {
     try {
-      await axios.delete(`/api/food/${id}`);
-      setFoods(prev => prev.filter(f => f._id !== id));
+      const res = await apiClient.post('/api/workout', workoutData);
+      setWorkouts((prevWorkouts) => [...prevWorkouts, res.data]);
+      toast.success('Workout added successfully!');
     } catch (error) {
-      console.error("Failed to delete food", error);
+      console.error('Failed to add workout', error);
+      toast.error('Could not add workout.');
     }
-  };
+  }, []);
 
-  const addWorkout = async (workout) => {
-    try {
-      const res = await axios.post('/api/workout', workout);
-      if (res.data) {
-        setWorkouts(prev => [...prev, res.data]);
-      }
-    } catch (error) {
-      console.error("Failed to add workout", error);
-    }
-  };
+  const netCalories = useMemo(() => {
+    const totalCaloriesConsumed = food.reduce((sum, item) => sum + item.calories, 0);
+    const totalCaloriesBurned = workouts.reduce((sum, item) => sum + item.caloriesBurned, 0);
+    return totalCaloriesConsumed - totalCaloriesBurned;
+  }, [food, workouts]);
 
-  const deleteWorkout = async (id) => {
-    try {
-      await axios.delete(`/api/workout/${id}`);
-      setWorkouts(prev => prev.filter(w => w._id !== id));
-    } catch (error) {
-      console.error("Failed to delete workout", error);
-    }
-  };
-
-  const totalCalories = foods.reduce((sum, f) => sum + f.calories, 0);
-  const totalBurnt = workouts.reduce((sum, w) => sum + w.caloriesBurnt, 0);
-  const netCalories = totalCalories - totalBurnt;
 
   const value = {
-    foods,
+    food,
     workouts,
     addFood,
-    deleteFood,
     addWorkout,
-    deleteWorkout,
     netCalories,
-    totalCalories,
-    totalBurnt,
+    loading,
+    refreshData: fetchData,
   };
 
   return <DataContext.Provider value={value}>{children}</DataContext.Provider>;
-} 
+}; 
