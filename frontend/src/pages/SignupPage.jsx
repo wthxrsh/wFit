@@ -23,7 +23,7 @@ export default function SignupPage() {
       await signup(username, email, password);
       navigate('/calories');
     } catch (err) {
-      setError(err.response?.data?.msg || 'Failed to sign up. Please try again.');
+      setError(err.message || 'Failed to sign up. Please try again.');
     }
   };
 
@@ -32,7 +32,7 @@ export default function SignupPage() {
       <h1 className="page-title">Create Account</h1>
       <form onSubmit={handleSubmit} className="form">
         <input
-          className="form-input"
+          className={`form-input ${error ? 'is-invalid' : ''}`}
           type="text"
           placeholder="Username"
           value={username}
@@ -40,7 +40,7 @@ export default function SignupPage() {
           required
         />
         <input
-          className="form-input"
+          className={`form-input ${error ? 'is-invalid' : ''}`}
           type="email"
           placeholder="Email"
           value={email}
@@ -48,7 +48,7 @@ export default function SignupPage() {
           required
         />
         <input
-          className="form-input"
+          className={`form-input ${error ? 'is-invalid' : ''}`}
           type="password"
           placeholder="Password"
           value={password}
