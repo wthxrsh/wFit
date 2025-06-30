@@ -1,35 +1,33 @@
 require('dotenv').config();
 const express = require('express');
-const cors = require('cors');
-const app = express();
 const mongoose = require('mongoose');
+const cors = require('cors');
 const path = require('path');
-const connectDB = require('./config/db');
 
+const app = express();
+
+// Middleware
 app.use(cors());
 app.use(express.json());
 
-mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/wtrack', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-.then(() => console.log('MongoDB connected'))
-.catch((err) => console.error('MongoDB connection error:', err));
+// --- Database Connection ---
+const MONGODB_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/wtrack';
 
-// Connect Database
-connectDB();
+mongoose.connect(MONGODB_URI)
+  .then(() => console.log('MongoDB successfully connected'))
+  .catch(err => {
+    console.error('MongoDB connection error:', err);
+    process.exit(1); // Exit process with failure
+  });
+// -------------------------
 
-app.get('/', (req, res) => {
-  res.send('API is running');
-});
-
+// API Routes
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/food', require('./routes/food'));
 app.use('/api/workout', require('./routes/workout'));
 
 // Serve static assets in production
 if (process.env.NODE_ENV === 'production') {
-  // Set static folder
   app.use(express.static(path.join(__dirname, '../frontend/dist')));
 
   app.get('*', (req, res) => {

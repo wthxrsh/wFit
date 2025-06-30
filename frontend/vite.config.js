@@ -11,6 +11,11 @@ export default defineConfig({
     },
   },
   server: {
-    // This is handled by the proxy in package.json
+    proxy: {
+      '/api': {
+        target: 'http://localhost:5000',
+        changeOrigin: true,
+      },
+    }
   },
 })
