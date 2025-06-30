@@ -24,14 +24,14 @@ function NetCaloriesDisplay() {
 }
 
 function Navbar() {
-  const { currentUser, logout } = useAuth();
+  const { user, logout } = useAuth();
 
   return (
     <header className="navbar">
       <div className="navbar-section">
         <span className="nav-brand">wFit</span>
         <nav className="nav-links">
-          {currentUser && (
+          {user && (
             <>
               <NavLink to="/calories" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>Calories</NavLink>
               <NavLink to="/workouts" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>Workouts</NavLink>
@@ -40,10 +40,10 @@ function Navbar() {
         </nav>
       </div>
 
-      {currentUser && <div className="navbar-section-center"><NetCaloriesDisplay /></div>}
+      {user && <div className="navbar-section-center"><NetCaloriesDisplay /></div>}
 
       <div className="navbar-section-right">
-        {currentUser ? (
+        {user ? (
           <button onClick={logout} className="nav-link-button">Logout</button>
         ) : (
           <nav className="nav-links">
