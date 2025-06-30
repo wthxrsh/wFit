@@ -3,23 +3,23 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const { login } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (email || password) {
+    if (username || password) {
       setError('');
     }
-  }, [email, password]);
+  }, [username, password]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     try {
-      await login(email, password);
+      await login(username, password);
       navigate('/calories');
     } catch (err) {
       setError(err.message || 'Failed to log in. Please check your credentials.');
@@ -32,10 +32,10 @@ export default function LoginPage() {
       <form onSubmit={handleSubmit} className="form">
         <input
           className={`form-input ${error ? 'is-invalid' : ''}`}
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          type="text"
+          placeholder="Username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
           required
         />
         <input

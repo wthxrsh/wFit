@@ -52,35 +52,22 @@ const registerUser = async (req, res) => {
 // @route   POST /api/auth/login
 // @access  Public
 const loginUser = async (req, res) => {
-  const { email, password } = req.body;
-  console.log('Login attempt for email:', email);
+  const { username, password } = req.body;
 
   try {
-    console.log('1. Searching for user in database...');
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ username });
     if (!user) {
-      console.log('User not found.');
       return res.status(400).json({ msg: 'Invalid credentials' });
     }
-    console.log('User found:', user.username);
 
-    console.log('2. Comparing passwords...');
     const isMatch = await user.comparePassword(password);
     if (!isMatch) {
-      console.log('Password does not match.');
       return res.status(400).json({ msg: 'Invalid credentials' });
     }
-    console.log('Password matched.');
 
-    console.log('3. Creating JWT...');
-    if (!process.env.JWT_SECRET) {
-      console.error('FATAL: JWT_SECRET is not defined.');
-      return res.status(500).send('Server error: JWT secret not configured.');
-    }
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
       expiresIn: '30d',
     });
-    console.log('JWT created successfully.');
 
     res.json({
       token,
@@ -92,8 +79,7 @@ const loginUser = async (req, res) => {
     });
 
   } catch (err) {
-    console.error('!!! An unexpected error occurred during login !!!');
-    console.error(err); // Log the full error object
+    console.error(err.message);
     res.status(500).send('Server error');
   }
 };

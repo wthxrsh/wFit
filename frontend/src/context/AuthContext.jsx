@@ -32,9 +32,9 @@ export function AuthProvider({ children }) {
     verifyUser();
   }, []);
 
-  const login = useCallback(async (email, password) => {
+  const login = useCallback(async (username, password) => {
     try {
-      const res = await apiClient.post('/api/auth/login', { email, password });
+      const res = await apiClient.post('/api/auth/login', { username, password });
       setUser(res.data.user);
       localStorage.setItem('token', res.data.token);
       toast.success('Logged in successfully!');
